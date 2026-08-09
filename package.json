@@ -1,0 +1,23 @@
+{
+  "name": "mcp-yango-retail",
+  "version": "0.0.1",
+  "description": "MCP server for the Yango Tech Retail grocery API — orders, products, prices, stocks and stores. For Claude, Cursor, Codex and other AI clients.",
+  "keywords": ["mcp", "model-context-protocol", "yango", "yango-tech", "grocery", "retail", "e-commerce", "claude", "cursor", "codex"],
+  "homepage": "https://github.com/A1-x-Tech/mcp-yango-retail#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/A1-x-Tech/mcp-yango-retail.git"
+  },
+  "license": "MIT",
+  "author": "gistrec <gistrec@gmail.com>",
+  "type": "module",
+  "bin": {
+    "mcp-yango-retail": "index.js"
+  },
+  "files": [
+    "index.js"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}
