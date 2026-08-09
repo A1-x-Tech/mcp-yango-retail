@@ -23,8 +23,8 @@ npm run smoke      # live READ-ONLY call (stores/get; needs YANGO_RETAIL_TOKEN)
 - `src/config.ts` — env → config; throws `ConfigError` (with a `reason` code) instead of
   exiting, so `index.ts` can report the drop-off before dying. Required:
   `YANGO_RETAIL_TOKEN` (alias `YANGO_AUTH_TOKEN`); reason: `missing_token`. Optional:
-  `YANGO_RETAIL_API_BASE_URL` (alias `YANGO_API_BASE_URL`), `YANGO_RETAIL_TIMEOUT_MS`,
-  `YANGO_RETAIL_MAX_RETRIES`.
+  `YANGO_RETAIL_API_BASE_URL` (aliases `YANGO_API_BASE_URL`, `YANGO_DOMAIN`),
+  `YANGO_RETAIL_TIMEOUT_MS`, `YANGO_RETAIL_MAX_RETRIES`.
 - `src/client.ts` — all HTTP. `request(path, body, {idempotent})` POSTs JSON with the
   Bearer header, rejects paths that resolve to a foreign origin (SSRF guard), enforces an
   AbortController timeout that also covers reading the body, retries with backoff (honors

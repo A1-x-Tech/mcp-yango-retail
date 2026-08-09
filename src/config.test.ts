@@ -9,6 +9,7 @@ const ALL_VARS: Record<string, string | undefined> = {
   YANGO_AUTH_TOKEN: undefined,
   YANGO_RETAIL_API_BASE_URL: undefined,
   YANGO_API_BASE_URL: undefined,
+  YANGO_DOMAIN: undefined,
   YANGO_RETAIL_TIMEOUT_MS: undefined,
   YANGO_RETAIL_MAX_RETRIES: undefined,
 };
@@ -88,6 +89,22 @@ test("the base URL override and its alias are honored, primary first", () => {
     },
     () => {
       assert.equal(loadConfig().apiBase, "https://primary.example");
+    },
+  );
+});
+
+test("YANGO_DOMAIN (the official Python client's name) works as the last base-URL fallback", () => {
+  withEnv({ YANGO_RETAIL_TOKEN: "t", YANGO_DOMAIN: "https://domain.example" }, () => {
+    assert.equal(loadConfig().apiBase, "https://domain.example");
+  });
+  withEnv(
+    {
+      YANGO_RETAIL_TOKEN: "t",
+      YANGO_API_BASE_URL: "https://alias.example",
+      YANGO_DOMAIN: "https://domain.example",
+    },
+    () => {
+      assert.equal(loadConfig().apiBase, "https://alias.example");
     },
   );
 });

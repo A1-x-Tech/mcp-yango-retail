@@ -29,7 +29,9 @@ function die(message: string, reason: string): never {
  *   YANGO_RETAIL_TOKEN         required Bearer token issued by Yango Tech
  *                              (YANGO_AUTH_TOKEN is accepted as an alias — it is
  *                              the name the official Python client uses)
- *   YANGO_RETAIL_API_BASE_URL  API root override (alias: YANGO_API_BASE_URL)
+ *   YANGO_RETAIL_API_BASE_URL  API root override (aliases: YANGO_API_BASE_URL, and
+ *                              YANGO_DOMAIN — the name the official Python client's
+ *                              README uses)
  *   YANGO_RETAIL_TIMEOUT_MS    per-request timeout (default 60000)
  *   YANGO_RETAIL_MAX_RETRIES   transient-error retries (default 3)
  */
@@ -47,7 +49,11 @@ export function loadConfig(): YangoRetailConfig {
 
   return {
     token,
-    apiBase: process.env.YANGO_RETAIL_API_BASE_URL || process.env.YANGO_API_BASE_URL || DEFAULT_BASE,
+    apiBase:
+      process.env.YANGO_RETAIL_API_BASE_URL ||
+      process.env.YANGO_API_BASE_URL ||
+      process.env.YANGO_DOMAIN ||
+      DEFAULT_BASE,
     timeoutMs: Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 60_000,
     maxRetries: Number.isFinite(maxRetries) && maxRetries >= 0 ? maxRetries : 3,
   };

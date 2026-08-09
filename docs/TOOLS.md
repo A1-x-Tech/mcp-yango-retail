@@ -71,6 +71,6 @@ Notes:
 | Variable | Required | Default | Description |
 |---|---|---|---|
 | `YANGO_RETAIL_TOKEN` | yes | — | Bearer token issued by Yango Tech (`YANGO_AUTH_TOKEN` accepted as an alias — the official Python client's name). Treat it as a secret. |
-| `YANGO_RETAIL_API_BASE_URL` | no | `https://api.retailtech.yango.com` | API root override (`YANGO_API_BASE_URL` accepted as an alias). |
+| `YANGO_RETAIL_API_BASE_URL` | no | `https://api.retailtech.yango.com` | API root override (`YANGO_API_BASE_URL` and `YANGO_DOMAIN` — the official Python client's name — accepted as aliases). |
 | `YANGO_RETAIL_TIMEOUT_MS` | no | `60000` | Per-request timeout, ms. |
 | `YANGO_RETAIL_MAX_RETRIES` | no | `3` | Retries on transient errors (429 always; 5xx/network for reads only). |
