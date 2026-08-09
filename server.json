@@ -1,0 +1,49 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.A1-x-Tech/mcp-yango-retail",
+  "title": "Yango Tech Retail MCP",
+  "description": "MCP server for the Yango Tech Retail B2B API: orders, products, prices, discounts, stocks.",
+  "websiteUrl": "https://github.com/A1-x-Tech/mcp-yango-retail#readme",
+  "repository": {
+    "url": "https://github.com/A1-x-Tech/mcp-yango-retail",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "mcp-yango-retail",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "YANGO_RETAIL_TOKEN",
+          "description": "Bearer token issued by Yango Tech for the retailer account. Treat it as a secret.",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "YANGO_RETAIL_API_BASE_URL",
+          "description": "API root override.",
+          "isRequired": false,
+          "default": "https://api.retailtech.yango.com"
+        },
+        {
+          "name": "YANGO_RETAIL_TIMEOUT_MS",
+          "description": "Per-request timeout in milliseconds.",
+          "isRequired": false,
+          "default": "60000"
+        },
+        {
+          "name": "YANGO_RETAIL_MAX_RETRIES",
+          "description": "Retries on transient errors (429 always; 5xx/network for reads only).",
+          "isRequired": false,
+          "default": "3"
+        }
+      ]
+    }
+  ]
+}
