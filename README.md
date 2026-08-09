@@ -22,7 +22,7 @@ order states and receipts, and updates prices and stocks for you.
    ```bash
    claude mcp add yango-retail \
      -e YANGO_RETAIL_TOKEN=your_token \
-     -- npx -y mcp-yango-retail
+     -- npx -y mcp-yango-retail@latest
    ```
 
 3. Ask the assistant: "List our stores and show the current stock of product 4607034171438 in each."
@@ -70,7 +70,7 @@ messages that carry the `x-yatraceid`/`x-yarequestid` headers Yango Tech support
 ```bash
 claude mcp add yango-retail \
   -e YANGO_RETAIL_TOKEN=your_token \
-  -- npx -y mcp-yango-retail
+  -- npx -y mcp-yango-retail@latest
 ```
 
 </details>
@@ -85,7 +85,7 @@ Add to `claude_desktop_config.json`:
   "mcpServers": {
     "yango-retail": {
       "command": "npx",
-      "args": ["-y", "mcp-yango-retail"],
+      "args": ["-y", "mcp-yango-retail@latest"],
       "env": {
         "YANGO_RETAIL_TOKEN": "your_token"
       }
@@ -106,7 +106,7 @@ Add to `~/.cursor/mcp.json` (or `.cursor/mcp.json` in the project):
   "mcpServers": {
     "yango-retail": {
       "command": "npx",
-      "args": ["-y", "mcp-yango-retail"],
+      "args": ["-y", "mcp-yango-retail@latest"],
       "env": {
         "YANGO_RETAIL_TOKEN": "your_token"
       }
@@ -127,7 +127,7 @@ Add to `.vscode/mcp.json` — note the key is `servers`, not `mcpServers`:
   "servers": {
     "yango-retail": {
       "command": "npx",
-      "args": ["-y", "mcp-yango-retail"],
+      "args": ["-y", "mcp-yango-retail@latest"],
       "env": {
         "YANGO_RETAIL_TOKEN": "your_token"
       }
