@@ -1,6 +1,6 @@
 {
   "name": "mcp-yango-retail",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP server for the Yango Tech Retail (grocery platform) B2B API — orders, receipts, products, prices, discounts, stocks and stores for AI agents.",
   "mcpName": "io.github.A1-x-Tech/mcp-yango-retail",
   "type": "module",

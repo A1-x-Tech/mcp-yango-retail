@@ -12,6 +12,25 @@ import { registerPricingTools } from "./tools/pricing.js";
 import { registerRawTool } from "./tools/raw.js";
 import { registerStockTools } from "./tools/stocks.js";
 
+/**
+ * Prose handed to the calling model in the `initialize` result — the only place
+ * it learns what the tool list cannot say: which API this is, what the API
+ * refuses to do, and the behaviours that make a naive loop expensive or unsafe.
+ */
+const INSTRUCTIONS =
+  "Yango Tech Retail is the retailer-facing B2B API of the Yango Tech grocery/darkstore platform — " +
+  "the backend of one retailer account, not a marketplace seller portal or the Yango taxi/delivery " +
+  "API. Nothing has a delete endpoint: products and prices are upserts, discounts can only be " +
+  "created and never listed back, price lists only queried. Every endpoint is a POST under " +
+  "/b2b/v1/*, reads included; there is no public docs portal: write responses are undocumented (2xx " +
+  "= success), unknown fields pass through, and untooled endpoints go through raw_request, which " +
+  "can write anything. Stay near 5 requests/second per endpoint; 429 is retried with backoff but " +
+  "nothing throttles proactively, and a failed write is never replayed: after a 5xx or timeout " +
+  "confirm with a read before re-sending. Some reads report per-item failures inside a 200 response " +
+  "— check items, not just the status; errors carry x-yatraceid/x-yarequestid for support tickets. " +
+  "Batch caps: 100 products, prices or discounts and 1000 stock lines per call. Writes change real " +
+  "data at once: orders, catalog, customer-facing prices and stock.";
+
 /** Reads the package version so the server reports its real version to MCP clients. */
 function readVersion(): string {
   try {
@@ -47,10 +66,14 @@ async function main(): Promise<void> {
   const config = await loadConfigOrExit(telemetry);
   const client = new YangoRetailClient(config);
 
-  const server = new McpServer({
-    name: "mcp-yango-retail",
-    version: readVersion(),
-  });
+  const server = new McpServer(
+    {
+      name: "mcp-yango-retail",
+      version: readVersion(),
+    },
+    // Surfaces in the initialize result, ahead of any tool call.
+    { instructions: INSTRUCTIONS },
+  );
 
   instrumentToolCalls(server, telemetry);
   server.server.oninitialized = () => {
