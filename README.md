@@ -13,6 +13,8 @@ Yango Tech Retail MCP lets a retail team work with stores, orders, products, pri
 - **Useful API coverage.** `raw_request` reaches documented endpoints without a dedicated tool and is guarded against foreign paths.
 - **Safe retries.** Temporary 429 responses are retried; writes are not replayed after an uncertain failure.
 
+[Connect the server](#quick-start) · [Explore use cases](#what-you-can-ask-it-to-do) · [Open technical documentation](#technical-documentation)
+
 ## See it work in a minute
 
 > **You:** List our stores and show the current stock of product `4607034171438` in each.
@@ -228,6 +230,8 @@ Questions and issues: [GitHub Issues](https://github.com/A1-x-Tech/mcp-yango-ret
 ### Yango Tech Retail MCP
 
 Yango Tech Retail MCP помогает управлять магазинами, заказами, товарами, ценами, скидками и остатками через AI-приложение. Сервер подключается к B2B API ритейл-платформы Yango Tech и превращает рутинные операции в диалог.
+
+[Подключить сервер](#быстрый-старт) · [Посмотреть сценарии](#что-можно-поручить) · [Открыть техническую документацию](docs/TOOLS.md)
 
 ### Быстрый старт
 
