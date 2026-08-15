@@ -36,14 +36,7 @@ Yango Tech Retail MCP lets a retail team work with stores, orders, products, pri
 You need Node.js 20+ and a Yango Tech Retail Bearer token. The token is stored in the AI client's local configuration, so treat it like a password.
 
 1. [Get a token](#getting-access) from your Yango Tech integration manager.
-2. Add the server to your AI client. For Codex CLI:
-
-   ```bash
-   codex mcp add yango-retail \
-     --env YANGO_RETAIL_TOKEN=your_token \
-     -- npx -y mcp-yango-retail@latest
-   ```
-
+2. Add the server using the instructions for your AI client below.
 3. Start with a read-only request:
 
    > List our stores and show the current stock of product 4607034171438 in each.
@@ -55,15 +48,27 @@ The browser versions of ChatGPT and Claude cannot attach a local `npx`/stdio ser
 <details open>
 <summary><strong>Codex</strong></summary>
 
+**In the app:**
+
+1. Open **Settings → Plugins → MCP servers**.
+2. Select **Add server**.
+3. Add the launch command `npx -y mcp-yango-retail@latest` and the `YANGO_RETAIL_TOKEN` environment variable with your token.
+
+**From the command line:**
+
 ```bash
 codex mcp add yango-retail \
   --env YANGO_RETAIL_TOKEN=your_token \
   -- npx -y mcp-yango-retail@latest
 ```
 
-Check the connection with `codex mcp list`.
+Check the connection:
 
-[Codex MCP documentation](https://developers.openai.com/codex/mcp/)
+```bash
+codex mcp list
+```
+
+[Codex MCP documentation](https://learn.chatgpt.com/docs/extend/mcp?surface=cli)
 </details>
 
 <details>
