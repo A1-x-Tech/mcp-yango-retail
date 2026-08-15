@@ -20,16 +20,22 @@ npm run smoke      # live READ-ONLY call (stores/get; needs YANGO_RETAIL_TOKEN)
 
 ## Architecture
 
-- `src/config.ts` — env → config; throws `ConfigError` (with a `reason` code) instead of
-  exiting, so `index.ts` can report the drop-off before dying. Required:
-  `YANGO_RETAIL_TOKEN` (alias `YANGO_AUTH_TOKEN`); reason: `missing_token`. Optional:
-  `YANGO_RETAIL_API_BASE_URL` (aliases `YANGO_API_BASE_URL`, `YANGO_DOMAIN`),
-  `YANGO_RETAIL_TIMEOUT_MS`, `YANGO_RETAIL_MAX_RETRIES`.
-- `src/client.ts` — all HTTP. `request(path, body, {idempotent})` POSTs JSON with the
-  Bearer header, rejects paths that resolve to a foreign origin (SSRF guard), enforces an
-  AbortController timeout that also covers reading the body, retries with backoff (honors
-  `Retry-After`) and throws `YangoRetailError(status, body, {traceId, requestId})` with
-  the `x-yatraceid`/`x-yarequestid` headers. One typed method per endpoint; page-size
+- `src/config.ts` — env → config. A missing `YANGO_RETAIL_TOKEN` (alias `YANGO_AUTH_TOKEN`)
+  is NOT an error: the field stays `undefined`, the server starts degraded and the client
+  raises `CredentialsError` at call time (telemetry reason: `missing_token`). Also home to
+  `CredentialsError` / `MISSING_TOKEN_MESSAGE` (opens with the historical startup error
+  verbatim, then names the variables and the restart). `ConfigError` (with a `reason` code)
+  is reserved for malformed values, caught by `loadConfigOrDegraded` in `index.ts` (no such
+  checks exist today). Optional: `YANGO_RETAIL_API_BASE_URL` (aliases `YANGO_API_BASE_URL`,
+  `YANGO_DOMAIN`), `YANGO_RETAIL_TIMEOUT_MS`, `YANGO_RETAIL_MAX_RETRIES`.
+- `src/client.ts` — all HTTP. `request(path, body, {idempotent})` first rejects a missing
+  token with `CredentialsError` (before building the request, the retries and fetch — the
+  message is the product: it names the env variable to set and the needed restart), then
+  POSTs JSON with the Bearer header, rejects paths that resolve to a foreign origin (SSRF
+  guard), enforces an AbortController timeout that also covers reading the body, retries
+  with backoff (honors `Retry-After`) and throws
+  `YangoRetailError(status, body, {traceId, requestId})` with the
+  `x-yatraceid`/`x-yarequestid` headers. One typed method per endpoint; page-size
   defaults (products 300, others 100), the `price_per_quantity` default and the stocks
   `update_mode` mapping live here.
 - `src/tools/orders.ts` — six order/receipt tools; `src/tools/catalog.ts` — stores +
@@ -37,14 +43,33 @@ npm run smoke      # live READ-ONLY call (stores/get; needs YANGO_RETAIL_TOKEN)
   — stock feed + update; `src/tools/raw.ts` — `raw_request`. `src/tools/util.ts` —
   `ok`/`fail`, the `READ_ONLY`/`WRITE`/`DESTRUCTIVE` annotation presets and shared zod
   schema factories.
-- `src/index.ts` — wires every `register*` into the McpServer.
+- `src/index.ts` — wires every `register*` into the McpServer. `loadConfigOrDegraded()`
+  catches `ConfigError`, pings `startup_failed` (fire-and-forget) and degrades the config to
+  "no token"; an unconfigured start prepends `UNCONFIGURED_PREFIX` — plus
+  `Configuration problem: <message>` when a ConfigError was caught — to the initialize
+  `instructions`, and `oninitialized` sends `server_start` for a configured install or
+  `unconfigured_start` (with the reason) otherwise.
 - `src/telemetry.ts` — anonymous usage pings (ids/names/versions only, never data or
   arguments; fire-and-forget, must never block or throw; opt-out `ASKADS_TELEMETRY=0`).
-  `startup_failed` is the exception: `sendBlocking` awaits it, because the caller exits
-  right after. Its `reason` is a closed vocabulary — never a variable's name or value.
+  `server_start` means "a usable install started"; an install without a token sends
+  `unconfigured_start` instead. The `reason` is a closed vocabulary (`missing_token`) —
+  never a variable's name or value. `startup_failed` remains for a config unusable at load
+  time (malformed values), also fire-and-forget.
 
 ## Conventions (do not break)
 
+- **Never exit because of configuration.** A server that dies before the MCP handshake
+  leaves the user with a red cross and no reason — telemetry across this line of servers
+  showed that state accounted for nearly every unconfigured install. A missing token is a
+  survivable state: start, answer `initialize`/`tools/list` (with the unconfigured prefix in
+  the instructions), and reject tool calls with `CredentialsError`. There are no login
+  tools: the token comes only from the environment, so the fix is the operator setting
+  `YANGO_RETAIL_TOKEN` (or its alias `YANGO_AUTH_TOKEN`) and restarting the server.
+  `config.test.ts`, `client.test.ts` and `test/dist-smoke.test.js` pin this.
+- **Credential failures are not transport failures.** `CredentialsError` is thrown before
+  the retry/backoff branch (and before fetch) in `request()` — retrying it burns seconds of
+  backoff before the user sees the one message that helps. Pinned by "fetch must not be
+  called" assertions in `client.test.ts`.
 - **This is a write API — gate the retries.** Every endpoint is a POST, so "retry GETs"
   does not apply: `idempotent: true` is set only on side-effect-free reads (orders/get,
   orders/state, orders/events/query, receipts/get, stores/get, the query feeds,
