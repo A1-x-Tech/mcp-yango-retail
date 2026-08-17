@@ -1,5 +1,7 @@
 # Tools
 
+For task-oriented guidance, open the [MCP capability catalog](./capabilities/index.md). This page remains the technical reference for schemas and API responses.
+
 Yango Tech Retail is a **write API**: some tools below create orders, overwrite prices and
 stock levels. Every endpoint lives under `/b2b/v1/*` on `api.retailtech.yango.com` and is a
 **POST with a JSON body — including reads**. Tool inputs match the wire format (snake_case,
