@@ -34,8 +34,12 @@ export type ReceiptClientField = "full_name" | "phone_number" | "email" | "deliv
 export type StockUpdateMode = "modify" | "initialize";
 
 export interface YangoRetailConfig {
-  /** Bearer token issued by Yango Tech. Treated as a secret. */
-  token: string;
+  /**
+   * Bearer token issued by Yango Tech. Treated as a secret. Absent when neither
+   * YANGO_RETAIL_TOKEN nor its alias YANGO_AUTH_TOKEN is set — the server still
+   * starts (degraded) and the client raises CredentialsError at call time.
+   */
+  token?: string;
   /** API root. Defaults to https://api.retailtech.yango.com. */
   apiBase: string;
   /** Per-request timeout in milliseconds. Defaults to 60_000. */

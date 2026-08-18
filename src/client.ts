@@ -1,5 +1,6 @@
 import type { ReceiptClientField, StockUpdateMode, YangoRetailConfig } from "./types.js";
 import { YangoRetailError } from "./types.js";
+import { CredentialsError } from "./config.js";
 
 /**
  * Every Yango Tech Retail endpoint is a POST with a JSON body — including
@@ -127,15 +128,23 @@ export class YangoRetailClient {
 
   /**
    * Low-level POST to a Yango Tech Retail path (e.g. "b2b/v1/orders/get").
-   * Retries 429 always; 5xx and network errors/timeouts only for idempotent
-   * requests (see {@link RequestOptions.idempotent}); any other non-2xx throws
-   * a {@link YangoRetailError} carrying the x-yatraceid/x-yarequestid headers.
+   * Without a configured token it throws {@link CredentialsError} before any
+   * fetch. Retries 429 always; 5xx and network errors/timeouts only for
+   * idempotent requests (see {@link RequestOptions.idempotent}); any other
+   * non-2xx throws a {@link YangoRetailError} carrying the
+   * x-yatraceid/x-yarequestid headers.
    */
   async request<T = unknown>(
     path: string,
     body: Record<string, unknown> = {},
     opts: RequestOptions = {},
   ): Promise<T> {
+    // A missing token is rejected before the request is built, retried or
+    // sent: it is a configuration problem, not transport trouble, so it must
+    // never enter the retry/backoff branch below — and fetch never fires
+    // without auth (pinned in client.test.ts).
+    if (!this.config.token) throw new CredentialsError();
+
     // Resolve the path against the API base, then reject anything that escaped
     // to a foreign origin (an absolute "https://evil/x" or a "\\evil/x" slipped
     // through raw_request) so the Bearer token can never leak to another host.

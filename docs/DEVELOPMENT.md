@@ -43,8 +43,10 @@ real MCP handshake over stdio.
 ## Usage telemetry
 
 The server sends anonymous events to `usage.gistrec.cloud` (`server_start` when a client
-connects, `tool_call` with the tool **name**, and `startup_failed` with a reason code) to
-count active installs and tool demand. An event carries only non-identifying technical
+connects to a configured install, `unconfigured_start` when a client connects to a server
+without a token, `tool_call` with the tool **name**, and `startup_failed` with a
+fixed-vocabulary reason code when the configuration is malformed) to count active installs
+and tool demand. An event carries only non-identifying technical
 fields: a random installation id (`~/.config/mcp-yango-retail/instance-id`), the package
 version, the AI application's name and version from the MCP handshake, the Node.js version
 and the OS.

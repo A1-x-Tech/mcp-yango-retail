@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { YangoRetailClient } from "./client.js";
+import { CredentialsError, MISSING_TOKEN_MESSAGE } from "./config.js";
 import type { YangoRetailConfig } from "./types.js";
 
 const BASE = "https://api.retailtech.yango.com";
@@ -419,6 +420,43 @@ test("request() aborts and reports a timeout when the request hangs", async () =
     await assert.rejects(() => client.createOrder({ order_id: "o-1" }), /timed out after 10ms/);
   } finally {
     globalThis.fetch = original;
+  }
+});
+
+// --- Missing credentials (degraded start) ---
+
+// The exact startup-era text, relayed verbatim at call time — pinned so a
+// reworded message does not silently change what the model tells the user.
+const MISSING_TOKEN_TEXT =
+  "YANGO_RETAIL_TOKEN is required (the Bearer token issued by Yango Tech for your retailer " +
+  "account; YANGO_AUTH_TOKEN is accepted as an alias).";
+
+test("request() without a token throws CredentialsError; fetch is never called", async () => {
+  const mock = mockFetch(() => new Response("{}", { status: 200 }));
+  try {
+    // maxRetries is deliberately non-zero: zero fetch calls proves the error
+    // skips the retry/backoff loop entirely, not just that retries ran out.
+    const client = new YangoRetailClient({ apiBase: BASE, maxRetries: 3, retryBaseMs: 0 });
+    await assert.rejects(
+      () => client.getStores(),
+      (err: unknown) => {
+        assert.ok(err instanceof CredentialsError, "must be a CredentialsError");
+        assert.equal((err as Error).name, "CredentialsError");
+        assert.equal((err as Error).message, MISSING_TOKEN_MESSAGE);
+        // The historical startup error, verbatim — the message is the product.
+        assert.ok(
+          (err as Error).message.startsWith(MISSING_TOKEN_TEXT),
+          `the message must open with the exact startup text, got: ${(err as Error).message}`,
+        );
+        assert.match((err as Error).message, /restart the server/, "the fix must mention the restart");
+        return true;
+      },
+    );
+    // Not transport trouble: the retry/backoff branch — and fetch itself —
+    // must never run for a configuration problem.
+    assert.equal(mock.calls.length, 0, "fetch must not be called without a token");
+  } finally {
+    mock.restore();
   }
 });
 
