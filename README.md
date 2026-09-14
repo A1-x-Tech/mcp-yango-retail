@@ -3,8 +3,8 @@
 **English** | [Русский](./README.ru.md)
 
 [![npm](https://img.shields.io/npm/v/mcp-yango-retail)](https://www.npmjs.com/package/mcp-yango-retail)
-[![CI](https://github.com/A1-x-Tech/mcp-yango-retail/actions/workflows/ci.yml/badge.svg)](https://github.com/A1-x-Tech/mcp-yango-retail/actions/workflows/ci.yml)
 [![Glama](https://glama.ai/mcp/servers/A1-x-Tech/mcp-yango-retail/badges/score.svg)](https://glama.ai/mcp/servers/A1-x-Tech/mcp-yango-retail)
+[![CI](https://github.com/A1-x-Tech/mcp-yango-retail/actions/workflows/ci.yml/badge.svg)](https://github.com/A1-x-Tech/mcp-yango-retail/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 **A1 Yango Tech Retail MCP** connects an AI app to a retailer account in Yango Tech Retail. Use ordinary language to check stores, orders, products, prices and stock, or to create orders and update account data when needed.
