@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "yango-retail": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-yango-retail@latest"
+      ],
+      "env": {
+        "YANGO_RETAIL_TOKEN": "${YANGO_RETAIL_TOKEN}"
+      }
+    }
+  }
+}

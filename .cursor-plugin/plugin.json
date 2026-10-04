@@ -1,0 +1,24 @@
+{
+  "name": "mcp-yango-retail",
+  "displayName": "A1 Yango Tech Retail MCP",
+  "description": "MCP server for Yango Tech Retail — inspect and manage stores, catalog, prices, stock and orders from an AI app",
+  "author": {
+    "name": "Aleksandr Kovalko & Zinnur Temerbekov"
+  },
+  "homepage": "https://github.com/A1-x-Tech/mcp-yango-retail#readme",
+  "repository": "https://github.com/A1-x-Tech/mcp-yango-retail",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "yango",
+    "yango-tech",
+    "grocery",
+    "retail",
+    "darkstore",
+    "e-commerce",
+    "orders",
+    "inventory"
+  ],
+  "logo": "assets/a1-logo.svg"
+}
